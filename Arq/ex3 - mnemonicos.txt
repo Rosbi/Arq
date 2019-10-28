@@ -1,0 +1,22 @@
+000 LOAD M(303), STOR M(002, 28:39);       #load ponteiro, manda seu conteúdo para ADD em 002
+001 ADD M(302), STOR M(303);               #aumenta ponteiro em 1, stor em 303
+002 LOAD M(304), ADD M(000);               #passa para AC o conteúdo do vetor
+003 STOR M(306), DIV M(305);               #guarda em uma variável auxiliar (aux), divide por 2
+004 SUB M(302), JUMP+M(008, 20:39);        #tira 1 do resto, jump+M(008, 20:39) caso seja ímpar
+005 LOAD M(306), SUB M(300);               #load aux, aux - (maior par atual)
+006 JUMP+M(007, 0:19), JUMP M(00B, 20:39); #jump+M(007, 0:19) caso aux seja maior, jump(00B, 0:19) caso contrário
+007 LOAD M(306), STOR M(300);              #aux vira o maior par atual
+008 JUMP M(00B, 20:39), LOAD M(306);       #procede para 00B, load aux
+009 SUB M(301), JUMP+M(00B, 0:19);         #aux - (menor ímpar atual), vai para 00B caso aux seja maior
+00A LOAD M(306), STOR M(301);              #torna aux o menor ímpar atual
+00B LOAD M(307), SUB M(302);               #atualiza
+00C STOR M(307), JUMP+M(000, 0:19);        #         o contador
+
+300 00 000 00 000 #maior par
+301 00 000 00 FFF #menor impar
+302 00 000 00 001 #constante 1
+303 00 000 00 100 #ponteiro do vetor
+304 00 000 00 000 #constante 0
+305 00 000 00 002 #constante 2
+306 00 000 00 000 #variavel auxiliar
+307 00 000 00 012 # contador

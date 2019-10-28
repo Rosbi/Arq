@@ -1,0 +1,53 @@
+        #copia o vetor para o endereço 300
+000 LOAD M(206), STOR M(003, 8:19); #carrega o ponteiro de 100 e muda o endereço da instrução ADD em 003
+001 LOAD M(206), ADD M(201);        #aumenta 1 no ponteiro
+002 STOR M(206), LOAD M(200);       #troca o valor do ponteiro na memória e carrega o valor 0
+003 ADD M(000), STOR M(208);        #AC recebe o conteúdo do vetor e armazena em 208
+004 LOAD M(207), STOR M(007, 8:19); #carrega o ponteiro para 300 e muda o endereço de ADD em 007
+005 LOAD M(207), ADD M(201);        #aumenta 1 no ponteiro
+006 STOR M(207), LOAD M(208);       #troca o ponteiro na memória e carrega o valor em 208
+007 STOR M(000), LOAD M(205);       #passa o valor em 208 para o vetor em 300, carrega o contador
+008 SUB M(201), STOR M(205);        #diminui 1 no contador e armazena na memória
+009 JUMP+M(000, 0:19), LOAD M(204); #se contador>0 então vai para 000, senão carrega 300
+00A STOR M(207), LOAD M(202);       #volta o ponteiro para 300, carrega 14
+00B STOR M(205), JUMP M(010, 0:19); #reinicia o contador, salta para 010
+
+        #bubblesort no vetor em 300
+010 LOAD M(207), STOR M(013, 28:39);       #carrega o ponteiro para 300 (ptr) e muda a instrução ADD em 013
+011 LOAD M(207), ADD M(201);               #aumenta 1 no ptr
+012 STOR M(208), STOR M(015, 8:19);        #armazena ptr em vet_prox, muda a instrução ADD em 015
+013 LOAD M(200), ADD M(000);               #AC <- conteúdo de ptr
+014 STOR M(209), LOAD M(200);              #armazena em aux, carrega 0
+015 ADD M(000), STOR M(20A);               #AC <- conteúdo de vet_prox
+016 SUB M(209), SUB M(201);                #AC <- vet_prox - ptr - 1 (-1 pro caso de ambos serem iguais)
+017 JUMP+M(02A, 0:19), JUMP M(018, 20:39); #se AC>0 então pula para 02A, senão pula para 018(direita)
+018 00 000, LOAD M(208);                   #carrega vet_prox
+019 STOR M(01A, 8:19), LOAD M(209);        #altera o endereço da instrução STOR em 01A, carrega aux
+01A STOR M(000), LOAD M(207);              #conteúdo de vet_prox <- aux, carrega ptr
+01B STOR M(01C, 8:19), LOAD M(20A);        #altera o endereço da instrução STOR em 01C, carrega aux2
+01C STOR M(000), LOAD M(203);              #conteúdo de ptr <- aux2, carrega cont_troca
+01D ADD M(201), STOR M(203);               #cont_troca ++
+01E JUMP M(02A, 0:19), 00 000;             #pula para 02A
+
+02A LOAD M(207), ADD M(201);          #ptr++
+02B STOR M(207), LOAD M(205);         #carrega contador
+02C SUB M(201), STOR M(205);          #contador--
+02D JUMP+M(032, 20:39), LOAD M(203);  #se contador>0 então volta para 010, senão verifica cont_troca
+02E SUB M(199), JUMP+M(02F 20:39);    #cont_troca -= 2, se cont_troca>0 (nenhuma troca foi realizada) então pula para 02F(direita)
+02F 00 000, LOAD M(200);              #senão termina o programa; AC <- 0
+030 STOR M(203), LOAD M(204);         #cont_troca <- 0
+031 STOR M(207), LOAD M(202);         #               ptr <- 300
+032 STOR M(205), JUMP M(010, 0:19);   #                         contador <- 14, salta para 010
+
+199 00 000 00 002 #constante 2
+200 00 000 00 000 #constante 0
+201 00 000 00 001 #constante 1
+202 00 000 00 00D #constante 14
+203 00 000 00 000 #cont_troca (contador de quantas vezes um número foi trocado)
+204 00 000 00 300 #constante 300
+205 00 000 00 00E #contador de iterações
+206 00 000 00 100 #ponteiro para vetor de 15 posições a partir de 100
+207 00 000 00 300 #ponteiro para vetor de 15 posições a partir de 300
+208 00 000 00 000 #vet_prox (aponta para a posição seguinte do vetor)
+209 00 000 00 000 #aux (variável auxiliar para guardar o valor da posição atual do vetor)
+20A 00 000 00 000 #aux2 (guarda o valor da de vet_prox)

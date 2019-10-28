@@ -1,0 +1,37 @@
+000 LOAD M(301), STOR M(002, 28:39); #load vet, stor m(002, 28:39)
+001 ADD M(302), STOR M(301);         #vet point++, stor 301
+002 LOAD M(304), ADD M(000);         #load const 0, add (val vet)
+
+003 STOR M(305), SUB M(302);         #stor val vet em 305, val vet --
+004 STOR M(304), JUMP+M(008, 8:19);  #stor val vet-- em 304, jump+ (008)
+005 LOAD M(306), SUB M(307);         #load 306, diminui 2(resulta -1 caso primo)
+
+006 JUMP+M(000, 8:19), LOAD M(300);  #jump+ (), else load 300
+007 ADD M(302), STOR M(300);         # add 1, stor 300
+008 LOAD M(305), DIV M(304);         #load 305, div (305/304)
+
+009 SUB M(302), JUMP+M(00B, 8:19);   #div(305/304)--, jump+ (00B, 0:19)
+00A LOAD M(304), 0E 003;             #load 304, jump (003, 28:39)
+00B LOAD M(306), ADD M(302);         #load qtd divisores,  qtd divisores ++
+
+00C STOR M(306), LOAD M(304);        #stor(qtd divisores), load 304
+00D 0E 003, 00 000;                  #jump (003, 28:39)
+
+100 00 000 00 009
+101 00 000 00 021
+102 00 000 00 005
+103 00 000 00 1A5
+104 00 000 00 01C
+105 00 000 00 001
+106 00 000 00 004
+107 00 000 00 FFF
+108 00 000 00 F00
+109 00 000 00 000
+300 00 000 00 000 #quantidade de primos
+301 00 000 00 100 #local do vetor
+302 00 000 00 001 #constante 1
+303 00 000 00 010 #contador vetor
+304 00 000 00 000 #contador divisores
+305 00 000 00 000 #valor do vetor
+306 00 000 00 000 #quantidade de divisores
+307 00 000 00 002 #constante 2

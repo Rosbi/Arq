@@ -1,0 +1,11 @@
+000 LOAD M(114), STOR M(002, 28:39); #carrega o local do vetor e o coloca na instrução add em 002
+001 ADD M(115), STOR M(114);         #adiciona 1 no ponteiro
+002 LOAD M(116), ADD M(000);         #adiciona o conteudo da posição do vetor à variável soma
+003 STOR M(116), LOAD M(117);        #armazena o resultado em soma, carrega o contador
+004 SUB M(115), STOR M(117);         #diminui em 1 o contador
+005 JUMP+M(000, 8:19), 00 000;       #caso contador<0 então volta do início, senão encerra o programa
+
+114 00 000 00 100 #ponteiro do vetor
+115 00 000 00 001 #passo
+116 00 000 00 000 #soma
+117 00 000 00 013 #contador

@@ -1,0 +1,110 @@
+000 LOAD M(308), STOR M(002, 8:19); #altera o endereço de load em 002
+001 ADD M(305), STOR M(308);        #soma 1 ao ponteiro do vetor x
+002 LOAD M(000), STOR M(30A);       #armazena em aux o conteúdo do vetor
+003 LOAD M(302), SUB M(305);        #diminui 1 no contador 'i'
+004 STOR M(302), JUMP+M(010, 0:19); #se i>=0, então pula para 010, senão
+005 LOAD M(306), STOR M(308);       #reseta o ponteiro para 200
+006 LOAD M(304), STOR M(302);       #reseta o contador 'i' para 11
+007 LOAD M(302), SUB M(305);        #diminui 1 no contador 'i'
+008 STOR M(302), JUMP+M(020, 0:19); #se i>=0, então executa 020, senão
+009 LOAD M(306), STOR M(308);       #reseta ponteiro para 200
+00A LOAD M(304), STOR M(302);       #reseta 'i' para 11
+00B LOAD M(302), SUB M(305);        #subtrai 1 de 'i'
+00C STOR M(302), JUMP+M(050, 0:19); #se i>=0 executa 050, senão termina o programa
+
+#soma os divisores do número 'i' e os armazena no vetor soma
+010 LOAD M(30A), SUB M(305);                 #carrega o valor de aux, subtrai 1,
+011 STOR M(303), SUB M(305);                 #  armazena no contador 'j', e subtrai 1 para verificar não é 0
+012 JUMP+M(013, 20:39), JUMP M(019, 20:39);  #se j>0, então pula para load em 013, senão pula para load em 019
+013 00 000, LOAD M(30A);                     #
+014 DIV M(303), SUB M(305);                  #AC <- (aux/j)-1
+015 JUMP+M(018, 20:39), LOAD M(309);         #se AC<0 (ou seja, aux%j==0) então
+016 STOR M(017, 28:39), STOR M(018, 8:19);   #  altera as instruções add e stor para o ponteiro do vetor soma
+017 LOAD M(303), ADD M(000);                 #  (e.g. soma[j] = soma[j] + j, sendo j o resto da divisão)
+018 STOR M(000), LOAD M(303);                #senão
+019 JUMP+M(010, 20:39), LOAD M(309);         #  se j>=0, então faz mais uma iteração
+01A ADD M(305), STOR M(309);                 #senão adiciona 1 ao ponteiro do vetor soma
+01B JUMP M(000, 0:19), 00 000;               #  e volta para o início
+
+#conta quantos números são amigos, e armazena em 300
+020 LOAD M(304), SUB M(305);               #carrega 11(0B), subtrai 1
+021 STOR M(303), JUMP+M(022, 20:39);       #atribui ao contador 'j', se j<0, então volta para 007
+022 JUMP M(007, 0:19), LOAD M(306);        #senão
+023 ADD M(304), SUB M(302);                #pega a posição 'i' do vetor x (200+11-i, e.g. 206 para i=5)
+024 STOR M(024, 28:39), LOAD M(000);       #altera a instrução load, carrega o valor de x[i]
+025 STOR M(30A), LOAD M(306);              #aux <- x[i]
+026 ADD M(304), SUB M(303);                #pega a posição 'j' do vetor x
+027 STOR M(027, 28:39), LOAD M(000);       #
+028 STOR M(30B), LOAD M(30A);              #aux2 <- x[j]
+029 SUB M(30B), JUMP+M(02A, 20:39);        #  |AC <- (aux-aux2)
+02A JUMP M(02D, 0:19), LOAD M(30B);        #  |
+02B SUB M(30A), JUMP+M(02C, 20:39);        #  |AC <- (aux2-aux)
+02C JUMP M(02D, 0:19), JUMP M(041, 20:39); #acabamos de verificar se (x[i]==x[j]), então jump para 041, senão para 02D
+02D LOAD M(307), ADD M(304);               #AC <- soma[i]
+02E SUB M(302), STOR M(02F, 8:19);         #
+02F LOAD M(000), STOR M(30A);              #aux <- AC
+030 LOAD M(306), ADD M(304);               #AC <- x[j]
+031 SUB M(303), STOR M(032, 8:19);         #
+032 LOAD M(000), STOR M(30B);              #aux2 <- AC
+033 SUB M(30A), JUMP+M(034, 20:39);        #(verifica se soma[i]==x[j])|se (aux2-aux)<0 (i.e. são diferentes), pula para 041, senão para 034(direita)
+034 JUMP M(041, 20:39), LOAD M(30A);       #                           |
+035 SUB M(30B), JUMP+M(036, 20:39);        #                           |se (aux-aux2)<0 pula para 041, senão para 036(direita)
+036 JUMP M(041, 20:39), LOAD M(307);       #
+037 ADD M(304), SUB M(303);                #
+038 STOR M(038, 28:39), LOAD M(000);       #
+039 STOR M(30A), LOAD M(306);              #aux <- soma[j]
+03A ADD M(304), SUB M(302);                #
+03B STOR M(03B, 28:39), LOAD M(000);       #
+03C STOR M(30B), SUB M(30A);               #aux2 <- x[i]
+03D JUMP+M(03E, 0:19), JUMP M(041, 20:39); #se (soma[j]==x[i])|continua, senão pula para 041
+03E LOAD M(30A), SUB M(30B);               #                  |
+03F JUMP+M(040, 0:19), JUMP M(041, 20:39); #                  |
+040 LOAD M(300), ADD M(305);               #adiciona 1 à amigos
+041 STOR M(300), LOAD M(303);              #
+042 JUMP M(020, 20:39), 00 000;            #carrega o contador 'j' e pula para 020(direita)
+
+#conta quantos números são perfeitos
+050 LOAD M(306), STOR M(052, 8:19);  #altera o endereço do load
+051 ADD M(305), STOR M(306);         #atualiza o ponteiro de x
+052 LOAD M(000), STOR M(30A);        #aux <- x[i]
+053 LOAD M(307), STOR M(055, 8:19);  #altera o endereço de load
+054 ADD M(305), STOR M(307);         #atualiza o ponteiro de soma
+055 LOAD M(000), STOR M(30B);        #aux2 <- soma[i]
+056 SUB M(30A), JUMP+M(057, 20:39);  #(verifica se soma[i]==x[i])|se aux2-aux<0, volta para 0B, senão
+057 JUMP M(00B, 0:19), LOAD M(30A);  #                           |
+058 SUB M(30B), JUMP+M(059, 20:39);  #                           |se aux-aux2<0, volta para 0B, senão
+059 JUMP M(00B, 0:19), LOAD M(301);  #perfeitos++
+05A ADD M(305), STOR M(301);         #
+05B JUMP M(00B, 0:19), 00 000;       #volta para 0B
+
+300 00 000 00 000 #amigos
+301 00 000 00 000 #perfeitos
+302 00 000 00 00B #contador i
+303 00 000 00 000 #contador j
+304 00 000 00 00B #constante 11
+305 00 000 00 001 #constante 1
+306 00 000 00 200 #constante 200(hexa)
+307 00 000 00 210 #constante 210(hexa)
+308 00 000 00 200 #ponteiro para 200
+309 00 000 00 210 #ponteiro para 210
+30A 00 000 00 000 #variável auxiliar (aux)
+30B 00 000 00 000 #aux2
+
+#vetor x
+200 00 000 00 19C
+201 00 000 00 0DC #220 (amigo de 284)
+202 00 000 04 7F0 #18416 (amigo de 17296)
+203 00 000 00 006 #6 (perfeito)
+204 00 000 00 7A5
+205 00 000 00 11C #284
+206 00 000 00 1F0 #496 (perfeito)
+207 00 000 04 390 #17296
+208 00 000 00 066
+209 00 000 00 7B0
+
+#vetor soma (armazena a soma dos divisores do seu respectivo número no vetor anterior e.g. 200~210, 208~218, etc.)
+210 00 000 00
+.
+.
+.
+219 00 000 00
